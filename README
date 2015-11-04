@@ -1,4 +1,4 @@
-# WebSessionProfiler
+# WebSessionProfiler Proof of Concept
 Install:
 # in logbox/ and clientbox/ do
 vagrant up 
@@ -7,7 +7,7 @@ vagrant up
 # kibana on 127.0.0.1:5601
 # elasticsearch api on 127.0.0.1:9100
 
-Unified WebsessionProfiling mit Kibana - Elasticsearch - Fluentd - Syslog-NG und Apache/PHP
+Unified WebsessionProfiling Konzept mit Kibana - Elasticsearch - Fluentd - Syslog-NG und Apache/PHP
 
 Ziel: 
 Es soll ein Einheitliches Logging / Profiling / Tracking von Requests auf eine Webseite asynchron realisiert werden. 
