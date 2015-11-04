@@ -1,0 +1,35 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+Vagrant.configure(2) do |config|
+
+	config.vm.provider "virtualbox" do |v|
+		v.name = "log"
+	end
+	config.vm.box = "puphpet/debian75-x64"
+	config.vm.hostname = "log"
+	config.vm.provision :shell do |shell|
+		shell.inline = "mkdir -p /etc/puppet/modules;
+						puppet module install elasticsearch-elasticsearch;
+						puppet module install puppetlabs-java;
+						curl -L https://td-toolbelt.herokuapp.com/sh/install-debian-wheezy-td-agent2.sh | sh ;
+						sudo /opt/td-agent/embedded/bin/fluent-gem install fluent-plugin-grep;
+						sudo /opt/td-agent/embedded/bin/fluent-gem install fluent-plugin-record-reformer;
+						sudo /opt/td-agent/embedded/bin/fluent-gem install fluent-plugin-forest;
+						sudo /opt/td-agent/embedded/bin/fluent-gem install fluent-plugin-elasticsearch;
+						sudo /opt/td-agent/embedded/bin/fluent-gem install fluent-plugin-json-nest2flat;
+						sudo /opt/td-agent/embedded/bin/fluent-gem install fluent-plugin-grok-parser;
+						rm -f /etc/td-agent/td-agent.conf && ln -s /vagrant_data/etc/td-agent/td-agent.conf /etc/td-agent/td-agent.conf;
+						sudo mkdir /data/td-agent;
+						sudo chown td-agent:td-agent /data/td-agent;
+						service td-agent restart;
+						puppet module install evenup-kibana"
+    end
+	config.vm.provision "puppet" do |puppet|
+		puppet.manifests_path = "../manifests/"
+		puppet.manifest_file = "efk.pp"
+	end
+	config.vm.network "forwarded_port", guest: 9200, host: 9100
+	config.vm.network "forwarded_port", guest: 5601, host: 5601
+	config.vm.network "private_network", ip: "192.168.33.10"
+	config.vm.synced_folder "../configs/etc", "/vagrant_data/etc/"
+end
